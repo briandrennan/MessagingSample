@@ -10,16 +10,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSerilogAppLogging("BackgroundService");
+
+var rabbitSettings = builder.Configuration.GetRabbitMqSettings(sectionName: "RabbitMQ");
 builder.Services.AddMassTransit(bus =>
 {
     bus.UsingRabbitMq((context, rabbit) =>
     {
-        rabbit.Host("rabbitmq", "/", settings =>
+        rabbit.Host(rabbitSettings.HostName, rabbitSettings.VHost, settings =>
         {
             settings.MaxMessageSize(8192);
             settings.Heartbeat(TimeSpan.FromSeconds(30));
-            settings.Username("guest");
-            settings.Password("guest");
+            settings.Username(rabbitSettings.UserName);
+            settings.Password(rabbitSettings.Password);
         });
     });
 });

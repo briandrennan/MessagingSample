@@ -21,6 +21,8 @@ services:
       - 5021:80
     depends_on:
       - rabbitmq
+    environment:
+      - RABBITMQ__HOSTNAME=rabbitmq
 
   messagingsamplebackgroundservice:
     image: messagingsamplebackgroundservice
@@ -31,3 +33,5 @@ services:
       - 5022:80
     depends_on:
       - rabbitmq
+    environment:
+      - RABBITMQ__HOSTNAME=rabbitmq
