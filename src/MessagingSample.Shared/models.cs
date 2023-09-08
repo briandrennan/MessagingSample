@@ -1,6 +1,6 @@
 ﻿namespace MessagingSample.Shared;
 
-public record struct UserIdValue(Guid UserId)
+public readonly record struct UserIdValue(Guid UserId)
 {
     public override readonly string ToString() => $"UserId: {UserId}";
 }
@@ -10,7 +10,7 @@ public record Customer(
     string Name,
     DateOnly JoinedDate);
 
-public record struct CatalogItemIdValue(Guid ItemId)
+public readonly record struct CatalogItemIdValue(Guid ItemId)
 {
     public override readonly string ToString() => $"Catalog Item: {ItemId}";
 }
@@ -28,7 +28,7 @@ public record CatalogItem(
 public record DiscountModel(
     string DiscountCode);
 
-public record struct OrderIdValue(Guid OrderId)
+public readonly record struct OrderIdValue(Guid OrderId)
 {
     public override readonly string ToString() => $"Order: {OrderId}";
 }
