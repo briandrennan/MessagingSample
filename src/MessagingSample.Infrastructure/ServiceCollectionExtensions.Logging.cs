@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Globalization;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
 
@@ -15,7 +17,7 @@ public static partial class ServiceCollectionExtensions
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .Enrich.WithProperty("ServiceName", serviceName)
-                .WriteTo.Console()
+                .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
                 .CreateLogger();
 
             logging.AddSerilog(logger);
