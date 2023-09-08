@@ -1,4 +1,4 @@
-﻿namespace MessagingSample.Shared;
+﻿namespace MessagingSample.Domain;
 
 public readonly record struct UserIdValue(Guid UserId)
 {
