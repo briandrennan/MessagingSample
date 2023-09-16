@@ -11,6 +11,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSerilogAppLogging("BackgroundService");
 
+var connectionString = builder.Configuration.GetConnectionString("AppDB")
+                       ?? throw new InvalidOperationException("Connection string missing.");
+
 var rabbitSettings = builder.Configuration.GetRabbitMqSettings(sectionName: "RabbitMQ");
 builder.Services.AddMassTransit(bus =>
 {
@@ -26,7 +29,8 @@ builder.Services.AddMassTransit(bus =>
     });
 });
 
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddNpgSql(name: "AppDB", connectionString: connectionString, tags: new[] { "db", "postgres" });
 
 var app = builder.Build();
 
