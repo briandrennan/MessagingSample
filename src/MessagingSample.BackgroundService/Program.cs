@@ -1,8 +1,10 @@
 using MassTransit;
 
 using MessagingSample;
+using MessagingSample.Database.EF;
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,10 @@ builder.Services.AddSerilogAppLogging("BackgroundService");
 
 var connectionString = builder.Configuration.GetConnectionString("AppDB")
                        ?? throw new InvalidOperationException("Connection string missing.");
+
+Console.WriteLine("AppDB connectionString: {0}", connectionString);
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 var rabbitSettings = builder.Configuration.GetRabbitMqSettings(sectionName: "RabbitMQ");
 builder.Services.AddMassTransit(bus =>

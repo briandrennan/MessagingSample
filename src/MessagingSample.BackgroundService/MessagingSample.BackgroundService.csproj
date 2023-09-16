@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MessagingSample.Database\MessagingSample.Database.csproj" />
     <ProjectReference Include="..\MessagingSample.Infrastructure\MessagingSample.Infrastructure.csproj" />
   </ItemGroup>
 
