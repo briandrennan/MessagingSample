@@ -1,41 +1,40 @@
 ﻿namespace MessagingSample.Domain;
 
-public readonly record struct UserIdValue(Guid UserId)
+public record Result(Guid CorrelationId, bool Success, IEnumerable<string>? Errors = null)
 {
-    public override readonly string ToString() => $"UserId: {UserId}";
+    public static Result FromSuccess(Guid correlationId)
+        => new Result(correlationId, true);
+
+    public static Result<T> FromValue<T>(Guid correlationId, T data)
+        => new Result<T>(correlationId, true, data, null);
+
+    public static Result FromError(Guid correlationId, IEnumerable<string> errors)
+        => new Result(correlationId, false, errors);
+
+    public static Result<T> FromError<T>(Guid correlationId, IEnumerable<string> errors)
+        => new Result<T>(correlationId, false, default, errors);
 }
 
-public record Customer(
-    UserIdValue UserId,
-    string Name,
-    DateOnly JoinedDate);
+public record Result<T>(Guid CorrelationId, bool Success, T? Data, IEnumerable<string>? Errors = null)
+    : Result(CorrelationId, Success, Errors);
 
-public readonly record struct CatalogItemIdValue(Guid ItemId)
-{
-    public override readonly string ToString() => $"Catalog Item: {ItemId}";
-}
+public abstract record DomainEvent(Guid CorrelationId);
 
-public record CatalogItem(
-    CatalogItemIdValue ItemId,
-    string Title,
-    string? Description,
-    decimal SuggestedRetailPrice)
-{
-    public CatalogItem(CatalogItemIdValue itemId, string title, decimal suggestedRetailPrice)
-        : this(itemId, title, null, suggestedRetailPrice) { }
-}
+public abstract record StoreCommand(Guid CorrelationId, string StoreName)
+    : DomainEvent(CorrelationId);
 
-public record DiscountModel(
-    string DiscountCode);
+public record CreateStoreCommand(Guid CorrelationId, string StoreName)
+    : DomainEvent(CorrelationId);
 
-public readonly record struct OrderIdValue(Guid OrderId)
-{
-    public override readonly string ToString() => $"Order: {OrderId}";
-}
+/// <summary>
+/// Represents a command to set a value in a store.
+/// </summary>
+public record SetStoreValueCommand(
+    Guid CorrelationId,
+    string StoreName,
+    string StorageKey,
+    string StorageValue)
+    : StoreCommand(CorrelationId, StoreName);
 
-public record OrderModel(
-    OrderIdValue OrderId,
-    UserIdValue UserId,
-    DateTimeOffset OrderDate,
-    IReadOnlyList<CatalogItem> Items,
-    DiscountModel? Discount);
+public record DeleteStoreCommand(Guid CorrelationId, string StoreName)
+    : StoreCommand(CorrelationId, StoreName);
